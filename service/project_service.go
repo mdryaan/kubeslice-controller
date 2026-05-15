@@ -262,11 +262,15 @@ func (p *ProjectService) getNamespaceConfigFromConfigMap(ctx context.Context) (m
 	labels := make(map[string]string)
 	annotations := make(map[string]string)
 
-	if err := json.Unmarshal([]byte(cm.Data["labels"]), &labels); err != nil {
-		return nil, nil, err
+	if v, ok := cm.Data["labels"]; ok && v != "" {
+		if err := json.Unmarshal([]byte(v), &labels); err != nil {
+			return nil, nil, err
+		}
 	}
-	if err := json.Unmarshal([]byte(cm.Data["annotations"]), &annotations); err != nil {
-		return labels, nil, err
+	if v, ok := cm.Data["annotations"]; ok && v != "" {
+		if err := json.Unmarshal([]byte(v), &annotations); err != nil {
+			return labels, nil, err
+		}
 	}
 
 	return labels, annotations, nil
